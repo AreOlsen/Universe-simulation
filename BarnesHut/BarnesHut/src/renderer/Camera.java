@@ -9,7 +9,7 @@ import quad.Quadtree;
 import vecs.Vector2;
 import physics.Body;
 
-public class Camera {
+public class Camera{
     double zoomfactor = 1;
     Vector2 focusPoint = new Vector2(0, 0);
     double cameraSpeed;
@@ -109,12 +109,13 @@ public class Camera {
             }
         });
 
-        double prevTime = System.currentTimeMillis();
+        double prevTime = (double)System.nanoTime();
         for(;;){
-            double nowTime = System.currentTimeMillis();
-            double timeDelta = (nowTime-prevTime)/1000;
+            double nowTime = (double)System.nanoTime();
+            double timeDelta = (nowTime-prevTime)*Math.pow(10,-9);
             currentFPS = 1/timeDelta;
             prevTime=nowTime;
+            System.out.println(timeDelta);
             Update(timestep*timeDelta, quad.length/2, cofRef); 
         }
 
@@ -173,19 +174,19 @@ public class Camera {
 
 
     public void UpdateAccVelPos(double timestep, double cutoff){
-        for(Body b : quad.bodies){
+        quad.bodies.parallelStream().forEach(b -> {
             //Traverse down quad tree.
             List<Body> attractionBodies = quad.FindAttractionBodies(b, cutoff);
             b.UpdateAcceleration(attractionBodies);
             b.UpdateVelocity(timestep);
             b.UpdatePosition(timestep);
             b.UpdateColour();
-        }
+        });
     }
 
     public void SolveCollisions(int subStepCount, List<Body> bodies, double cof){
         for(int i = 0; i < subStepCount; i++){ 
-            for(Body b: bodies){
+            bodies.parallelStream().forEach(b -> {
                 List<Body> cellBodies = quad.Query(b.position, b.radius+quad.biggestRadius, false);
                 for(Body b2 : cellBodies){
                     if(b2==b){
@@ -196,8 +197,9 @@ public class Camera {
                     if(distance<(b.radius+b2.radius)){
                         b.Collision(b2, cof);
                     }
-                }
-            }
+                } 
+            });
         }
     }
+
 }

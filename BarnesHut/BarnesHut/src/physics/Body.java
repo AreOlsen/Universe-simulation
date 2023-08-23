@@ -24,6 +24,7 @@ public class Body {
     private Vector2 GravityAcc(List<Body> bodies){
         Vector2 acc = new Vector2(0,0);
         for(int i = 0; i < bodies.size(); i++){
+            //Self attract is not possible.
             if(bodies.get(i)==this){
                 continue;
             }

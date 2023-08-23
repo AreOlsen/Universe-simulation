@@ -17,7 +17,7 @@ public class App {
             double x = Math.cos(theta);
 
             Vector2 radius = new Vector2(x, y);
-            Vector2 location = Vector2.Product(Math.random()*Math.pow(10,6)+Math.pow(10,5)*2, radius);
+            Vector2 location = Vector2.Product(Math.random()*Math.pow(10,6)+Math.pow(10,5), radius);
             Vector2 emptyVector = new Vector2(0, 0); 
 
             Body newBody = new Body(5.972*Math.pow(10,24), Math.pow(10,4), location, emptyVector, emptyVector, timestep);

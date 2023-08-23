@@ -25,8 +25,7 @@ public class Quadtree {
         this.upperLeft = upperLeft;
         this.pointCount=pointCount;
         if(!bodies.isEmpty()){
-            for(Body b : bodies)
-            {
+            for(Body b : bodies){
                 this.totalmass+=b.mass;
                 this.centerOfMass=Vector2.Add(this.centerOfMass, Vector2.Product(b.mass, b.position));
                 this.biggestRadius=Math.max(this.biggestRadius,b.radius);
@@ -103,23 +102,23 @@ public class Quadtree {
     public List<Body> FindAttractionBodies(Body body, double cutoff){
         List<Body> attracBodies = new ArrayList<>();
         for(int i = 0; i < 4; i++){
+            //If no subquads or they are empty.
             if(subQuads[i]==null){
                 continue;
             } else if(subQuads[i].bodies.size()==0){
                 continue;
             }
             
+            //If they exceed cutoff we just get the avg.
             Vector2 diff = Vector2.Subtract(body.position, subQuads[i].centerOfMass);            
-            if(diff.AbsoluteValue()>cutoff){
+            if(diff.AbsoluteValue()>=cutoff){
                 Vector2 emptyVec = new Vector2(0, 0);
                 Body temp = new Body(subQuads[i].totalmass, 0, subQuads[i].centerOfMass, emptyVec, emptyVec, subQuads[i].timestep);
                 attracBodies.add(temp);
+
             } else {
-                for(int j = 0; j < subQuads[i].bodies.size(); j++){
-                    if(diff.AbsoluteValue()>=body.radius){
-                        attracBodies.add(subQuads[i].bodies.get(j));
-                    }
-                }
+                //Else we add all of them.
+                attracBodies.addAll(subQuads[i].bodies);
             }
         }
         return attracBodies;
@@ -144,21 +143,19 @@ public class Quadtree {
 
         //If no subs we get the ones inside.
         if(subQuads[0]==null){
-            for(Body b: this.bodies){
+            this.bodies.parallelStream().forEach(b -> {
                 double diff = Vector2.Subtract(b.position, position).AbsoluteValue();
                 if(diff<=radius){
                     bodies.add(b);
                 }
-            }
+            });
             return bodies;
         }
 
         //If there are subs we concat the bods from those.
         for(int i = 0; i < 4; i++){
             List<Body> bods = subQuads[i].Query(position, radius, insideX && insideY);
-            for(Body b: bods){
-                bodies.add(b);
-            }
+            bodies.addAll(bods);
         }
         return bodies;
     }
