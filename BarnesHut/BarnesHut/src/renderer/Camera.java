@@ -115,7 +115,6 @@ public class Camera{
             double timeDelta = (nowTime-prevTime)*Math.pow(10,-9);
             currentFPS = 1/timeDelta;
             prevTime=nowTime;
-            System.out.println(timeDelta);
             Update(timestep*timeDelta, quad.length/2, cofRef); 
         }
 
@@ -169,7 +168,7 @@ public class Camera{
     public void UpdateQuad(double timestep){
         Vector2 upLeft = Quadtree.FindMaxUpperLeft(quad.bodies);
         double newLength = Quadtree.FindMaxLength(upLeft, quad.bodies);
-        this.quad = new Quadtree(quad.bodies, quad.pointCount, upLeft, newLength, timestep);
+        this.quad = new Quadtree(quad.bodies, quad.pointCount, upLeft, newLength, timestep, 0, quad.maxDepth);
     }
 
 

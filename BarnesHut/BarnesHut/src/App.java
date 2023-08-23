@@ -25,7 +25,7 @@ public class App {
         }
         Vector2 upperLeft = Quadtree.FindMaxUpperLeft(bodies);
         double quadLength = Quadtree.FindMaxLength(upperLeft, bodies);
-        Quadtree quad = new Quadtree(bodies, 5, upperLeft, quadLength, timestep);
+        Quadtree quad = new Quadtree(bodies, 5, upperLeft, quadLength, timestep,0,(int)(Math.log(bodies.size())/Math.log(6))+1);
 
         int WIDTH = 1440;
         int HEIGHT = 810;

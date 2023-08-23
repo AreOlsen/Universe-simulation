@@ -17,13 +17,18 @@ public class Quadtree {
     public Quadtree[] subQuads = new Quadtree[4]; //0 = upperLeft, 1 = lowerLeft, 2 = upperRight, 3 = lowerRight.
     public double biggestRadius = 0;
     public int pointCount;
-    public Quadtree(List<Body> bodies, int pointCount, Vector2 upperLeft, double length, double timestep){
+    public int maxDepth;
+    public int depthIndex;
+    public Quadtree(List<Body> bodies, int pointCount, Vector2 upperLeft, double length, double timestep, int depthIndex, int maxDepth){
         //Center of mass and meta data.
         this.length = length;
         this.timestep = timestep;
         this.bodies = bodies;
         this.upperLeft = upperLeft;
         this.pointCount=pointCount;
+        this.maxDepth=maxDepth;
+        this.depthIndex=depthIndex;
+
         if(!bodies.isEmpty()){
             for(Body b : bodies){
                 this.totalmass+=b.mass;
@@ -36,7 +41,7 @@ public class Quadtree {
         }
 
         //Subquads.
-        if(bodies.size()>pointCount){
+        if(bodies.size()>pointCount&&depthIndex<(maxDepth)){
             //Define bodies.
             List<Body> upperRightBodies = new ArrayList<Body>();
             List<Body> lowerRightBodies = new ArrayList<Body>();
@@ -61,10 +66,10 @@ public class Quadtree {
             }
 
             //Create quads.
-            subQuads[0] = new Quadtree(upperLeftBodies, pointCount, upperLeftCorner, length/2,timestep);
-            subQuads[1] = new Quadtree(lowerLeftBodies, pointCount, lowerLeftCorner, length/2,timestep);
-            subQuads[2] = new Quadtree(upperRightBodies, pointCount, upperRightCorner, length/2,timestep);
-            subQuads[3] = new Quadtree(lowerRightBodies, pointCount, lowerRightCorner, length/2,timestep);
+            subQuads[0] = new Quadtree(upperLeftBodies, pointCount, upperLeftCorner, length/2,timestep,depthIndex+1,maxDepth);
+            subQuads[1] = new Quadtree(lowerLeftBodies, pointCount, lowerLeftCorner, length/2,timestep,depthIndex+1,maxDepth);
+            subQuads[2] = new Quadtree(upperRightBodies, pointCount, upperRightCorner, length/2,timestep,depthIndex+1,maxDepth);
+            subQuads[3] = new Quadtree(lowerRightBodies, pointCount, lowerRightCorner, length/2,timestep,depthIndex+1,maxDepth);
             for(int i = 0; i < 4;i++){
                 subQuads[i].parentTree=this;
             }
